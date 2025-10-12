@@ -7,6 +7,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class HelloController {
     @GetMapping("/")
     public String home() {
-        return "Hello, your app is working!";
+        return "Bonjour, CI/CD avec Jenkins !";
     }
 }

@@ -4,8 +4,9 @@ pipeline {
 
 
     environment {
-        DOCKERHUB_CREDENTIALS = 'docker-hub' // Your Jenkins Docker Hub credentials
+        DOCKERHUB_CREDENTIALS = 'docker-hub'
         IMAGE_BASE = 'alimiheb/demo-app'
+        HELM_CHART_PATH = './demo-app-chart'
     }
 
     triggers {
@@ -15,7 +16,7 @@ pipeline {
     stages {
         stage('Build & Test with Maven') {
             steps {
-                sh 'mvn clean install' // Build and run tests
+                sh 'mvn clean install'
             }
         }
 
@@ -40,12 +41,10 @@ pipeline {
             }
         }
 
-        stage('Deploy to Kubernetes') {
+        stage('Deploy with Helm') {
             steps {
                 withCredentials([file(credentialsId: '77b07b6e-8fcf-4199-9d27-5c34139ded93', variable: 'KUBECONFIG')]) {
-                    sh 'kubectl apply -f deployment.yaml'
-                    sh 'kubectl apply -f service.yaml'
-                    sh 'kubectl rollout status deployment/demo-app-deployment'
+                    sh 'helm upgrade --install demo-app ${HELM_CHART_PATH} --set image.tag=latest'
                 }
             }
         }
@@ -53,7 +52,7 @@ pipeline {
 
     post {
         success {
-            echo 'Build, test, Docker build, and push completed successfully!'
+            echo 'Build, test, Docker build, push, and Helm deployment completed successfully!'
         }
         failure {
             echo 'Pipeline failed!'

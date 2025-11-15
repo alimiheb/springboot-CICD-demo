@@ -42,7 +42,7 @@ pipeline {
 
         stage('Deploy to Kubernetes') {
             steps {
-                withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG')]) {
+                withCredentials([file(credentialsId: '77b07b6e-8fcf-4199-9d27-5c34139ded93', variable: 'KUBECONFIG')]) {
                     sh 'kubectl apply -f deployment.yaml'
                     sh 'kubectl apply -f service.yaml'
                     sh 'kubectl rollout status deployment/demo-app-deployment'
